@@ -1,70 +1,96 @@
-class Nodo:
-    def __init__(self, matriz, signo):
-        self.matriz = matriz
-        self.signo = signo
+import copy 
+
+class NodoPila:
+    # Clase nodo pila
+    def __init__(self, valor):
+        self.info = valor
+        self.sig = None
 
 class Pila:
+    # Clase pila
     def __init__(self):
-        self.items = []
+        self.cima = None
 
-    def push(self, item):
-        self.items.append(item)
+    def apilar(self, valor):
+        nuevo = NodoPila(valor)
+        nuevo.sig = self.cima
+        self.cima = nuevo
 
-    def pop(self):
-        return self.items.pop()
+    def desapilar(self):
+        valor = self.cima.info
+        self.cima = self.cima.sig
+        return valor
 
-    def is_empty(self):
-        return len(self.items) == 0
+    def pila_vacia(self):
+        return self.cima == None
 
-def submatriz(matriz, col):
-    return [fila[:col] + fila[col+1:] for fila in matriz[1:]]
+class Matriz:
+    def __init__(self, filas, columnas):
+        self.filas = filas
+        self.columnas = columnas
+        self.matriz = []
+        for i in range(self.filas):
+            self.matriz.append([0] * self.columnas)
 
-def determinante_recursivo_con_pila(matriz):
-    pila = Pila()
-    determinante = 0
+    def __str__(self):
+        return str(self.matriz)
 
-    for i, coeficiente in enumerate(matriz[0]):
-        pila.push(Nodo(submatriz(matriz, i), ((-1) ** i) * coeficiente))
+def determinante_recursivo(Matriz, total=0):
+    """
+    Función para el cálculo recursivo del determinante de cualquier matriz cuadrada.
+    """
+    tamaño = list(range(len(Matriz))) 
 
-    while not pila.is_empty():
-        nodo = pila.pop()
-        matriz_actual = nodo.matriz
-        signo_actual = nodo.signo
+    if len(Matriz) == 2 and len(Matriz[0]) == 2: 
+        val = Matriz[0][0] * Matriz[1][1] - Matriz[1][0] * Matriz[0][1] 
+        return val 
 
-        if len(matriz_actual) == 1:
-            determinante += signo_actual * matriz_actual[0][0]
-        else:
-            for i, coeficiente in enumerate(matriz_actual[0]):
-                pila.push(Nodo(submatriz(matriz_actual, i), signo_actual * ((-1) ** i) * coeficiente))
+    for fc in tamaño: 
+        As = copy.deepcopy(Matriz) 
+        As = As[1:] 
+        height = len(As) 
 
-    return determinante
+        for i in range(height): 
+            As[i] = As[i][0:fc] + As[i][fc+1:] 
 
-def determinante_iterativo_con_pila(matriz):
-    pila = Pila()
-    determinante = 0
-    signo = 1
+        sign = (-1) ** (fc % 2)  
+        sub_det = determinante_recursivo(As) 
+        total += sign * Matriz[0][fc] * sub_det 
 
-    pila.push(Nodo(matriz, 0, 0))
+    return total 
 
-    while not pila.is_empty():
-        nodo = pila.pop()
-        matriz_actual = nodo.matriz
+def determinante_iterativo(Matriz1):
+    aux = 0 
+    for o in range(0, size): 
+        temp = 1 
+        k = o 
+        for i in range(0, size): 
+            temp *= Matriz1[i][k] 
+            k += 1  
+            if k == size: 
+                k = 0 
+        aux += temp 
 
-        if len(matriz_actual) == 2:
-            determinante += nodo.signo * (matriz_actual[0][0] * matriz_actual[1][1] - matriz_actual[0][1] * matriz_actual[1][0])
-        else:
-            for i, coeficiente in enumerate(matriz_actual[0]):
-                pila.push(Nodo(submatriz(matriz_actual, i), nodo.signo * ((-1) ** i) * coeficiente))
+    for o in range(size-1, -1, -1): 
+        temp = 1 
+        k = o 
+        for i in range(0, size): 
+            temp *= Matriz1[i][k] 
+            k -= 1 
+            if k == -1: 
+                k = size - 1 
+        aux -= temp 
+    return aux 
 
-    return determinante
+Matriz1 = [[1, 2, 3, 4, 5], [6, 7, 8, 9, 10], [11, 12, 13, 14, 15], [16, 17, 18, 19, 20], [21, 22, 23, 24, 25]] 
+size = len(Matriz1) 
 
-matriz = [
-    [1, 2, 3, 4, 5],
-    [6, 7, 8, 9, 10],
-    [11, 12, 13, 14, 15],
-    [16, 17, 18, 19, 20],
-    [21, 22, 23, 24, 25]
-]
+if __name__ == "__main__":
+    # prueba de la función determinante_recursivo
 
-print("Determinante (recursivo con pila y clases):", determinante_recursivo_con_pila(matriz))
-print("Determinante (iterativo con pila y clases):", determinante_iterativo_con_pila(matriz))
+    # Introductimos el tamaño de la matriz
+    n = 5
+    # Creamos una matriz cuadrada random de tamaño nxn
+    Matriz = [[0] * n for i in range(n)]
+
+    #
