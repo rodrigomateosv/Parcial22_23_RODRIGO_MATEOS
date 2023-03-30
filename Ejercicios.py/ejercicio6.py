@@ -91,6 +91,5 @@ if __name__ == "__main__":
     # Introductimos el tamaño de la matriz
     n = 5
     # Creamos una matriz cuadrada random de tamaño nxn
-    Matriz = [[0] * n for i in range(n)]
+    Matriz = [0]
 
-    #
